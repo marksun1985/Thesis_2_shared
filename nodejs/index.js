@@ -59,7 +59,7 @@ function tcpdump() {
 			allBytes = bytesToGoogle + bytesToFacebook;
 			bytesTemp += tempGoogle + tempFacebook;
 			if(bytesTemp >= 1024) {
-				var round = Math.round(byteTemp);
+				var round = Math.round(byteTemp/1024);
 				// turn the motor in round number
 				arduino.write('B' + round + 'E');
 				util.log('motor turned ' + round*1.8 + ' degrees');
