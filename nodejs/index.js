@@ -2,7 +2,8 @@ var fs = require('fs'),
 	util = require('util'),
 	// ipList = require('./ipList'),
 	pcap = require('pcap'),
-	ifconfig = 'en0', // wlan3 for pcDuino
+	// ifconfig = 'en0',
+	ifconfig = 'wlan3', // wlan3 for pcDuino
 	pcap_session = pcap.createSession(ifconfig, "tcp"),
 	exec = require('child_process').exec,
 	sudo = require('sudo'),
@@ -13,7 +14,8 @@ var fs = require('fs'),
 	},
 	SerialPort = require("serialport").SerialPort,
 	// ls /dev/tty.*
-	sPort = "/dev/tty.usbmodem1411", // /dev/ttyACM0 for pcDuino
+	// sPort = "/dev/tty.usbmodem1411", 
+	sPort = "/dev/ttyACM0",
 	arduino = new SerialPort(sPort, {
 		baudrate: 9600
 	});
