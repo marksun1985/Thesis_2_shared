@@ -13,7 +13,7 @@ int fPin = 13;
 
 void setup() {
   // initialize the serial port:
-  Serial.begin(9600);
+  Serial.begin(115200);
   myStepper.setSpeed(60);
   pinMode(gPin, OUTPUT);
   pinMode(fPin, OUTPUT);
@@ -33,11 +33,11 @@ void loop() {
             value = inputString.toInt();
             Serial.println(value);
             
-            if(value == -10) { // google
+            if(inputString == "g") { // google
               digitalWrite(gPin, HIGH);
               delay(50);
               digitalWrite(gPin, LOW);
-            } else if(value == -20) { // facebook
+            } else if(inputString == "f") { // facebook
               digitalWrite(fPin, HIGH);
               delay(50);
               digitalWrite(fPin, LOW);
