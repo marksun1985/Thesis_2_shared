@@ -8,11 +8,15 @@ int stepCount = 0;         // number of steps the motor has taken
 boolean isReading = false;
 String inputString  = "";
 int value;
+int gPin = 12;
+int fPin = 13;
 
 void setup() {
   // initialize the serial port:
   Serial.begin(9600);
   myStepper.setSpeed(60);
+  pinMode(gPin, OUTPUT);
+  pinMode(fPin, OUTPUT);
 }
 
 void loop() {
@@ -29,8 +33,18 @@ void loop() {
             value = inputString.toInt();
             Serial.println(value);
             
-            // Drive stepper
-            myStepper.step(value);
+            if(value == -10) { // google
+              digitalWrite(gPin, HIGH);
+              delay(50);
+              digitalWrite(gPin, LOW);
+            } else if(value == -20) { // facebook
+              digitalWrite(fPin, HIGH);
+              delay(50);
+              digitalWrite(fPin, LOW);
+            } else {
+              // Drive stepper
+              myStepper.step(value);
+            }
             
             //resets vars            
             isReading = false;
