@@ -2,14 +2,18 @@ var fs = require('fs'),
 	util = require('util'),
 	// ipList = require('./ipList'),
 	pcap = require('pcap'),
-	ifconfig = 'en0',
-	// ifconfig = 'wlan3', // wlan3 for pcDuino
+	ifconfig,
 	pcap_session = pcap.createSession(ifconfig, "tcp"),
 	exec = require('child_process').exec,
 	SerialPort = require("serialport").SerialPort,
 	// ls /dev/tty.*
-	sPort = "/dev/tty.usbmodem1421", 
-	// sPort = "/dev/ttyACM0",
+	sPort,
+	sudo = require('sudo'),
+	options = {
+		cachePassword: true,
+		prompt: 'gimme password',
+		spawnOptions: ''
+	},
 	arduino = new SerialPort(sPort, {
 		baudrate: 9600
 	});
@@ -19,12 +23,27 @@ var bytesToGoogle = 0,
 	bytesTemp = 0,
 	allBytes = 0;
 
-arduino.on('open', function() {
-	console.log(process.platform);
-	util.log('open port for Arduino');
-	forwardIp();
-	// tcpdump();
-});
+function startApp() {
+	util.log('STARTING APP');
+	var os = process.platform;
+	if (os == 'darwin') {
+		util.log('you are on OSX');
+		ifconfig = 'en0';
+		sPort = "/dev/tty.usbmodem1421";
+	} else {
+		util.log('you are on Linux');
+		ifconfig = 'wlan3';
+		sPort = "/dev/ttyACM0";
+	}
+	// ARP
+	arp = sudo(['arpspoof', '-i', ifconfig, '192.168.1.1'], options);
+	util.log('Spoofing 192.168.1.1');
+	arduino.on('open', function() {
+		util.log('open port for Arduino');
+		forwardIp();
+		tcpdump();
+	});
+}
 
 arduino.on('error', function(err) {
 	util.log('w00ps! ' + err);
@@ -55,11 +74,11 @@ function tcpdump() {
 			}
 			allBytes = bytesToGoogle + bytesToFacebook;
 			bytesTemp += tempGoogle + tempFacebook;
-			if(bytesTemp >= 1024) {
-				var round = Math.round(byteTemp/1024);
+			if (bytesTemp >= 1024) {
+				var round = Math.round(byteTemp / 1024);
 				// turn the motor in round number
 				arduino.write('B' + round + 'E');
-				util.log('motor turned ' + round*1.8 + ' degrees');
+				util.log('motor turned ' + round * 1.8 + ' degrees');
 				bytesTemp = 0;
 			}
 		}
@@ -72,3 +91,5 @@ function forwardIp() {
 	util.log('ip forwarded!');
 	util.log('ready to rock!');
 }
+
+startApp();
