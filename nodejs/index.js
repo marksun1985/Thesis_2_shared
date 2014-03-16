@@ -29,7 +29,7 @@ function startApp() {
 	if (os == 'darwin') {
 		util.log('you are on OSX');
 		ifconfig = 'en0';
-		sPort = "/dev/tty.usbmodem1421";
+		sPort = "/dev/tty.usbmodem1411";
 	} else {
 		util.log('you are on Linux');
 		ifconfig = 'wlan5';
@@ -40,8 +40,8 @@ function startApp() {
 		baudrate: 115200
 	});
 	// ARP
-	// arp = sudo(['arpspoof', '-i', ifconfig, '192.168.1.1'], options);
-	// util.log('Spoofing 192.168.1.1');
+	arp = sudo(['arpspoof', '-i', ifconfig, '192.168.1.1'], options);
+	util.log('Spoofing 192.168.1.1');
 	arduino.on('open', function() {
 		util.log('open port for Arduino');
 		forwardIp();
@@ -90,6 +90,11 @@ function tcpdump() {
 				// util.log(allBytes/1000 + ' K sent to Silicon');
 				bytesTemp = 0;
 			}
+			if(oneRound >= 1024*1024*32.3) {
+				oneRound = 0;
+				// ring the bell
+
+			}
 		}
 
 	});
@@ -113,8 +118,7 @@ function drive() {
 			drivePool -= 3;
 			arduino.write('B' + 3 + 'E');
 			util.log('motor turned ' + 3 * 1.8 + ' degrees.' + ' pool = ' + drivePool);
-		}
-		if(drivePool >= 1000) {
+		}if(drivePool >= 1000) {
 			drivePool -= 5;
 			arduino.write('B' + 5 + 'E');
 			util.log('motor turned ' + 5 * 1.8 + ' degrees.' + ' pool = ' + drivePool);
