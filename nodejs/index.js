@@ -32,7 +32,7 @@ function startApp() {
 		sPort = "/dev/tty.usbmodem1421";
 	} else {
 		util.log('you are on Linux');
-		ifconfig = 'wlan3';
+		ifconfig = 'wlan5';
 		sPort = "/dev/ttyACM0";
 	}
 	pcap_session = pcap.createSession(ifconfig, "tcp");
@@ -40,8 +40,8 @@ function startApp() {
 		baudrate: 115200
 	});
 	// ARP
-	arp = sudo(['arpspoof', '-i', ifconfig, '192.168.1.1'], options);
-	util.log('Spoofing 192.168.1.1');
+	// arp = sudo(['arpspoof', '-i', ifconfig, '192.168.1.1'], options);
+	// util.log('Spoofing 192.168.1.1');
 	arduino.on('open', function() {
 		util.log('open port for Arduino');
 		forwardIp();
